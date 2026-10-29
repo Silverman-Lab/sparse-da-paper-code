@@ -1,0 +1,3 @@
+Marker for the manuscript_code root. Every R script in this folder finds the
+project root by walking up from the working directory to this file (see README.md),
+so it never reads or writes the original sparse_DA project tree.

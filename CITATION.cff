@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "Please cite the accompanying manuscript when using this research code."
+type: software
+title: "Sparse Bayesian Partially Identified Models for Microbiome Data: Research Code"
+authors:
+  - family-names: Gu
+    given-names: Won
+  - family-names: Chiaromonte
+    given-names: Francesca
+  - family-names: Silverman
+    given-names: Justin D.
