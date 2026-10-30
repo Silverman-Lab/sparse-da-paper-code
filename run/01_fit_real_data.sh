@@ -12,7 +12,8 @@
 # alone after the small studies finish.
 #
 # Exit status of every script goes to logs/fit_status.txt rather than aborting
-# the batch: one study failing should not cost the others.
+# the batch: one study failing should not cost the others. The script still
+# exits with status 1 at the end if any study failed.
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT" || exit 1

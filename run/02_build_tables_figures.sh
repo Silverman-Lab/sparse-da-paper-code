@@ -49,6 +49,7 @@ if ! run theta_perp_check "theta_perp_check.R"; then
   exit 1
 fi
 
+# From here on, keep going if a script fails, but exit with status 1 at the end.
 failures=0
 run tables_hybrid    "manuscript_tables.R" || failures=1
 if [ "${WITH_BOOTSTRAP:-0}" = 1 ]; then

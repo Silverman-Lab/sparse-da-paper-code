@@ -402,9 +402,9 @@ t.sampler <- function(nu.star, M.star, Xi.star, V.star){
 ssrv.mln<- function(Y = NULL, X = NULL, covariate, upsilon = NULL, Theta = NULL, 
                                Gamma = NULL, Omega = NULL, Xi = NULL, Theta.t = NULL, total_model = "unif", pars = c("Eta", "Lambda", 
                                                                                                    "Sigma"), sample.totals = NULL, sample = NULL, mean_lnorm = NULL, sd_lnorm = NULL, prob = 0.01,...){
-  # Adapted from fido::pibble, authored by Justin D. Silverman.
-  # Included here under MIT with his permission; see LICENSE and THIRD_PARTY.md.
-  # Upstream fido: https://github.com/jsilve24/fido (GPL-3).
+  # Adapted from fido::pibble (https://github.com/jsilve24/fido, GPL-3).
+  # Released here under MIT with permission from its author, Justin D. Silverman.
+  # See LICENSE and THIRD_PARTY.md.
   args <- list(...)
   N <- fido:::try_set_dims(c(ncol(Y), ncol(X), args[["N"]]))
   D <- fido:::try_set_dims(c(nrow(Y), nrow(Theta) + 1, nrow(Xi) + 1, ncol(Xi) + 1, args[["D"]]))

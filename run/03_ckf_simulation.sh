@@ -17,19 +17,15 @@ LOG="$ROOT/logs"
 mkdir -p "$LOG"
 
 failures=0
-if Rscript ckf_simulation_09012026.R > "$LOG/ckf_simulation.log" 2>&1; then
-  echo "pi = 0.20: exit=0"
-else
-  rc=$?
-  echo "pi = 0.20: exit=$rc"
-  failures=1
-fi
 
-if CKF_PI=0.05 CKF_TAG=pi05_09012026 Rscript ckf_simulation_09012026.R > "$LOG/ckf_simulation_pi05.log" 2>&1; then
-  echo "pi = 0.05: exit=0"
-else
-  rc=$?
-  echo "pi = 0.05: exit=$rc"
-  failures=1
-fi
-exit "$failures"
+Rscript ckf_simulation_09012026.R > "$LOG/ckf_simulation.log" 2>&1
+rc=$?
+echo "pi = 0.20: exit=$rc"
+[ "$rc" -eq 0 ] || failures=1
+
+CKF_PI=0.05 CKF_TAG=pi05_09012026 Rscript ckf_simulation_09012026.R > "$LOG/ckf_simulation_pi05.log" 2>&1
+rc=$?
+echo "pi = 0.05: exit=$rc"
+[ "$rc" -eq 0 ] || failures=1
+
+exit "$failures"   # 1 if either run failed

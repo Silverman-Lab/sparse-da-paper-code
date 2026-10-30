@@ -1,23 +1,23 @@
 # sparse-da-paper-code
 
-Research code accompanying **Sparse Bayesian Partially Identified Models for
-Microbiome Data**, by Won Gu, Francesca Chiaromonte, and Justin D. Silverman.
-The code was written by Won Gu.
+Code for the paper **Sparse Bayesian Partially Identified Models for Microbiome
+Data** by Won Gu, Francesca Chiaromonte, and Justin D. Silverman. The code was
+written by Won Gu.
 
-This repository contains the September 2026 analysis scripts and input data for
-six empirical studies and two simulation analyses. Fitted results, tables, and
-figures are generated locally and are not included. The main Sparse SSRV
-implementation is in `sparse_SSRV.R`; Study A has a separate implementation in
-`simulation_rerun/src/sparse_SSRV_rerun.R`.
+The repository holds the analysis scripts and input data for six real-data
+studies and two simulation studies, as run in September 2026. It does not
+include results, tables, or figures; you generate those by running the scripts.
+The main Sparse SSRV implementation is `sparse_SSRV.R`. Study A uses its own
+copy, `simulation_rerun/src/sparse_SSRV_rerun.R`.
 
 ## Setup
 
-Use Linux or macOS with Bash, zsh, R, and Julia on `PATH`. The original runs used
-R 4.4.3 and Julia 1.10. Recorded R package versions are listed in
-[dependencies.tsv](dependencies.tsv). Install the dependencies before running
-analyses; these records are historical versions, not a resolved R lockfile.
+You need Linux or macOS with Bash, zsh, R, and Julia. The original runs used
+R 4.4.3 and Julia 1.10. The R package versions used are listed in
+[dependencies.tsv](dependencies.tsv). Other versions may give slightly
+different results.
 
-The recorded installation sources are:
+Where to install the R packages from:
 
 - **GitHub:** [LinDA](https://github.com/zhouhj1994/LinDA),
   [MRCKF](https://github.com/aasrinivasan/MRCKF),
@@ -26,46 +26,49 @@ The recorded installation sources are:
   [driver](https://github.com/jsilve24/driver).
 - **Bioconductor:** ALDEx2, ANCOMBC, DESeq2, S4Vectors, baySeq, edgeR, limma,
   and phyloseq.
-- **CRAN:** the remaining packages in `dependencies.tsv`.
+- **CRAN:** everything else in `dependencies.tsv`.
 
-The fido reference in `simulation/src/01a_main_functions.R` belongs to an unused
-function and does not require installing fido for these analyses.
+You do not need to install fido. It is only used by a function in
+`simulation/src/01a_main_functions.R` that the analyses never call.
 
-Run commands from the repository root. Keep `.manuscript_code_root` when
-copying the repository: R scripts use it to locate the project. Study A locates
-its root using `sparse_SSRV.R`.
+Run everything from the repository root. The R scripts find the root by looking
+for the file `.manuscript_code_root`, so keep that file if you copy the
+repository. (Study A looks for `sparse_SSRV.R` instead.)
 
 ```sh
-# Parse the R scripts without running analyses or loading analysis packages:
+# Check that every R script parses (does not run anything):
 Rscript --vanilla run/check_environment.R --syntax-only
 
-# Check installed R packages and required executables:
+# Check that the R packages, bash, zsh, and julia are installed:
 Rscript --vanilla run/check_environment.R
 
-# Instantiate the supplied Julia environment and build its R bridge:
+# Set up the Julia environment used by MiMIX (once per machine):
 JULIA_PROJECT=simulation/src/mimix/julia_env julia -e 'using Pkg; Pkg.instantiate(); Pkg.build("RCall")'
 ```
 
-The Julia environment includes a manifest and a local copy of MiMIX. The run
-scripts select this environment through `JULIA_PROJECT`.
+The Julia environment in `simulation/src/mimix/julia_env/` pins the exact
+package versions and points to the copy of MiMIX in this repository. The run
+scripts set `JULIA_PROJECT` for you.
 
-## Run the analyses
+## Running the analyses
+
+There are four stages. Run them in order:
 
 ```sh
-bash run/01_fit_real_data.sh          # approximately 6 hours
-bash run/02_build_tables_figures.sh   # approximately 5 minutes, after stage 1
-bash run/03_ckf_simulation.sh         # approximately 14 hours
-zsh run/04_studyA_simulation.sh       # approximately 6 days, resumable
+bash run/01_fit_real_data.sh          # about 6 hours
+bash run/02_build_tables_figures.sh   # about 5 minutes
+bash run/03_ckf_simulation.sh         # about 14 hours
+zsh run/04_studyA_simulation.sh       # about 6 days; can be restarted
 ```
 
-These durations were reported for a 16 GB laptop; SELEX accounts for about
-five hours of stage 1. Simulations use multiple cores. Review
-`simulation_rerun/config.R` before running on shared hardware.
+Times are from the original runs on a 16 GB laptop. SELEX alone takes about
+5 hours of stage 1. The simulations use several cores; check
+`simulation_rerun/config.R` before running them on a shared machine.
 
-Stage 1 fits the six empirical studies and writes results with the `09012026`
-stamp, together with shared records used by stage 2:
+**Stage 1** fits the six real-data studies. Results are saved with the date
+stamp `09012026`, along with record files that stage 2 reads.
 
-| Study | Analysis script |
+| Study | Script |
 |---|---|
 | Prasse et al. (2015) | `2015_prasse_appliedEnvMicrobiology_wetlands/sparse_DA_09012026_rawVSqseq_mean5.R` |
 | Stämmler et al. (2016) | `2016_stammler_microbiome_micehuman/sparse_DA_09012026.R` |
@@ -74,96 +77,90 @@ stamp, together with shared records used by stage 2:
 | Jin et al. (2022) | `2022_Jin_natureComm_technicalReplicates/sparse_DA_09012026.R` |
 | Vandeputte et al. (2017) | `Vandeputte/vandeputte_09012026.R` |
 
-Stage 2 first runs `real data results.R` to build the four cross-study
-`real_data_*.RData` artifacts. It then runs `theta_perp_check.R`, which refits
-Sparse SSRV for the scale-recovery tables and diagnostics, before generating
-tables and figures. Stage 3 runs the CKF comparison at signal proportions
-0.20 and 0.05 and generates its tables. Stage 4 runs both Study A scenarios: 80% of spiked
-taxa increase in the main scenario (`09022026`), and 20% increase in the
-supplementary scenario (`09022026_pos20`). See
-[the Study A instructions](simulation_rerun/README.md) for individual sweeps and
-configuration details.
+**Stage 2** builds the tables and figures. It first runs `real data results.R`,
+which combines the stage 1 results into four `real_data_*.RData` files. Next,
+`theta_perp_check.R` refits Sparse SSRV to check how well it recovers scale
+(used by table T5 and Task 6). Then it makes the tables and figures.
 
-Logs for stages 1–3 are in `logs/`; Study A logs are under
-`simulation_rerun/results/main/`. Stages 1–3 return a failing exit status if an
-analysis fails. Stage 4 can print failures and still exit successfully, so
-inspect its logs and method completeness before accepting aggregates. Its
-supplementary runner can remove incomplete replicate directories before
-rerunning them; review its preflight before resuming existing results.
+**Stage 3** runs the CKF simulation twice, with 20% and with 5% of taxa
+changed, and writes tables T3 and S4.
 
-## Find the outputs
+**Stage 4** runs Study A twice: once with 80% of the changed taxa increasing
+(the main scenario, tag `09022026`) and once with 20% increasing (the
+supplement, tag `09022026_pos20`). See the
+[Study A README](simulation_rerun/README.md) to run one part at a time.
 
-| Output | Generator | Stage |
+Logs for stages 1–3 go to `logs/`. Study A logs go to
+`simulation_rerun/results/main/`.
+
+If a script in stages 1–3 fails, the stage runs the remaining scripts and then
+exits with an error. (Stage 2 stops right away if `real data results.R` or
+`theta_perp_check.R` fails, because everything after them depends on their
+output.) Stage 4 is different: it prints a message
+when something fails but still exits normally, so read its logs before trusting
+the results. When it is restarted, the supplement script deletes any replicate
+that finished without its MiMIX results and runs it again (see the top of
+`simulation_rerun/run_supplement.sh`).
+
+## Outputs
+
+| Output | Made by | Stage |
 |---|---|---|
-| `manuscript_tables/`: T1, T2, T4_1–T4_5, T5 (three files), S1, S3, and `manuscript_tables_09012026.tex` | `manuscript_tables.R`, which sources the study summaries and Tasks 1–3 | 2 |
-| `manuscript_tables/`: T3 and S4, including `_pi05` versions | `ckf_simulation_09012026.R` and `ckf_tables_09012026.R` | 3 |
+| `manuscript_tables/`: T1, T2, T4_1–T4_5, T5 (three files), S1, S3, and `manuscript_tables_09012026.tex` | `manuscript_tables.R`, which runs Tasks 1–3 and the study summaries | 2 |
+| `manuscript_tables/`: T3 and S4, plus `_pi05` versions | `ckf_simulation_09012026.R`, which runs `ckf_tables_09012026.R` at the end | 3 |
 | `manuscript_figures/lfc_diagnose_*.pdf` (seven figures) | `Task 6 LFC distribution diagnostic.R` | 2 |
 | `manuscript_figures/stammler_all_pairs_methods.pdf` | `Task 4 stammler all pairs figure.R` | 2 |
 | `manuscript_figures/stammler_all_pairs_ssrv_variants.pdf` | `Task 5 stammler all pairs variant figure.R` | 2 |
-| `simulation_rerun/results/main/<tag>/`: replicates and aggregate CSVs | `run_main.R` and `aggregate_main.R` in `simulation_rerun/` | 4 |
+| `simulation_rerun/results/main/<tag>/`: replicates and summary CSVs | `simulation_rerun/run_main.R`, then `aggregate_main.R` | 4 |
 | `simulation_rerun/results/figures/`: `main_*`, `decomp_*`, `scale_choice_*` | `simulation_rerun/aggregate_main.R` | 4 |
-| `simulation_rerun/results/figures/`: `studyA_*`, `runtime_*` | `plot_studyA_combined.R` and `plot_runtime.R` in `simulation_rerun/` | 4 |
+| `simulation_rerun/results/figures/`: `studyA_*`, `runtime_*` | `simulation_rerun/plot_studyA_combined.R` and `plot_runtime.R` | 4 |
 
-Generated results are ignored by Git. Input files and their sources are listed
-in [THIRD_PARTY.md](THIRD_PARTY.md). Simulation inputs are generated with the
-SparseDOSSA2 Stool template. The bundled legacy fit
-`2016_stammler_microbiome_micehuman/stammler_mrckf_out_filter5.RDS` is read by a
-final plotting block in the Stämmler script; that plot is not a manuscript figure.
+`manuscript_tables/` and `manuscript_figures/` start out empty. Git ignores all
+generated files.
 
-## Rerunning and interpreting results
+The input data and where each file came from are listed in
+[THIRD_PARTY.md](THIRD_PARTY.md). The simulations generate their own data from
+the SparseDOSSA2 Stool template.
 
-Shared record files replace entries for the current study/comparison key while
-retaining other entries; `theta_perp_check.csv` is rebuilt from the stored
-scale-recovery records. A partially rerun directory
-can therefore contain records from several runs. Start from a clean results
-state when a complete, consistent rebuild is needed. Study A uses the replicate
-index as its seed and resumes existing replicates; fit scripts also set seeds.
-Exact numerical agreement depends on the software environment.
+`2016_stammler_microbiome_micehuman/stammler_mrckf_out_filter5.RDS` is an older
+saved fit. Only the last block of the Stämmler script reads it, to draw a plot
+that is not in the paper. It is included so the script runs to the end.
 
-Sparse SSRV uses `scale_draw = "shared"`: each posterior draw adds one scalar
-Gaussian draw to every taxon. The default hybrid selection rule,
-`scale_rule = "width"`, chooses the arm with the larger median taxon-wise 95%
-credible-interval width of the delivered posterior.
+## Notes on rerunning
 
-The supplied reproduction notes reported matching September outputs for the
-reporting stage, the Zemb fit, and one Study A worker replicate. Those checks
-have not been independently repeated for this release. Release preparation
-checked R and shell syntax and exercised the stage 1–3 wrappers with simulated
-successes and failures; it did not rerun the full analyses.
+**Record files keep old rows.** Each time a study runs, it replaces its own rows
+in the shared record files and leaves other rows alone. If you rerun only some
+studies, the records will mix results from different runs. For a clean rebuild,
+delete old results first. (`theta_perp_check.csv` is rebuilt from scratch each
+time.)
 
-The following manuscript/code differences remain unresolved:
+**Seeds.** Every fit script sets a random seed, and Study A uses the replicate
+number as its seed. Even so, different package versions can change the numbers.
 
-- The manuscript describes hybrid selection by scale variance, while the code
-  defaults to posterior interval width. Supplementary text describes independent
-  Gaussian draws across taxa, while the code defaults to a shared scalar draw.
-- The CKF simulation uses a sequencing depth of 4,000,000; the supplementary text
-  gives 20,000,000.
-- CKF tables handle zero-discovery replicates differently across methods:
-  Sparse SSRV averages omit undefined false-discovery proportions, while CKF
-  replaces NaNs with zero. Failed fits and valid zero-discovery replicates need
-  to be distinguished before interpreting or changing these summaries.
-- A generator for the manuscript figure
-  `real/sensitivity_3combined 09012026 mean5.pdf` was not found in the supplied
-  code. Generated table names also differ from manuscript input names, and
-  Study A supplementary figures use `_pos20` rather than the manuscript's
-  `_supp` suffix. Check contents before copying or renaming outputs.
+**Scale draw and scale rule.** By default, Sparse SSRV uses
+`scale_draw = "shared"`: for each posterior draw, one random number is added to
+every taxon. It picks between its two versions (arms) with
+`scale_rule = "width"`, which chooses the arm whose 95% credible intervals have
+the larger median width.
 
-## Licensing and citation
+**What has been checked.** Before release, the reporting stage, the Zemb fit,
+and one Study A replicate were rerun and matched the September results. For this
+release, we only checked that the scripts parse and that the stage 1–3 scripts
+report failures correctly. We did not rerun the full analyses.
 
+## License and citation
 
-The authors’ original code and the included fido-derived excerpt are available
-under the [MIT License](LICENSE). Justin D. Silverman, the author of that
-excerpt, has authorized its inclusion under MIT. Bundled MiMIX code retains its
-[upstream MIT License](simulation/src/mimix/LICENSE). Other third-party material
-and datasets are excluded from the root license and retain their own terms.
-Sources, applicable terms, and remaining provenance questions are documented in
-[THIRD_PARTY.md](THIRD_PARTY.md).
+The code is released under the [MIT License](LICENSE). This includes a short
+section adapted from fido, which its author, Justin D. Silverman, has allowed
+us to release under MIT. The bundled copy of MiMIX keeps its own
+[MIT License](simulation/src/mimix/LICENSE). The datasets are not covered by
+our license; each keeps its original terms. See [THIRD_PARTY.md](THIRD_PARTY.md)
+for details.
 
-If you use this code in your research, please cite the accompanying paper:
+If you use this code, please cite the paper:
 
 > Won Gu, Francesca Chiaromonte, and Justin D. Silverman.
 > *Sparse Bayesian Partially Identified Models for Microbiome Data*.
 
-See [CITATION.cff](CITATION.cff) for citation metadata. The paper DOI and
-publication details will be added when available. Citation is requested as an
-academic courtesy and is not an additional condition of the MIT License.
+Citation details are also in [CITATION.cff](CITATION.cff). We will add the DOI
+once the paper is published.
