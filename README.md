@@ -67,8 +67,19 @@ take hours to days. Current validation and limitations are recorded in the
 
 ## Licensing and citation
 
-A license for the authors’ code has not yet been selected. Included third-party
-code and datasets retain their own terms; their redistribution terms need to be
-documented before public release. See [THIRD_PARTY.md](THIRD_PARTY.md).
-Use [CITATION.cff](CITATION.cff) for the manuscript title and authors; add the
-paper DOI and release identifier when available.
+The authors’ original code and the included fido-derived excerpt are available
+under the [MIT License](LICENSE). Justin D. Silverman, the author of that
+excerpt, has authorized its inclusion under MIT. Bundled MiMIX code retains its
+[upstream MIT License](simulation/src/mimix/LICENSE). Other third-party material
+and datasets are excluded from the root license and retain their own terms.
+Sources, applicable terms, and remaining provenance questions are documented in
+[THIRD_PARTY.md](THIRD_PARTY.md).
+
+If you use this code in your research, please cite the accompanying paper:
+
+> Won Gu, Francesca Chiaromonte, and Justin D. Silverman.
+> *Sparse Bayesian Partially Identified Models for Microbiome Data*.
+
+See [CITATION.cff](CITATION.cff) for citation metadata. The paper DOI and
+publication details will be added when available. Citation is requested as an
+academic courtesy and is not an additional condition of the MIT License.

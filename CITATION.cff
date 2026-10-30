@@ -9,3 +9,13 @@ authors:
     given-names: Francesca
   - family-names: Silverman
     given-names: Justin D.
+preferred-citation:
+  type: article
+  title: "Sparse Bayesian Partially Identified Models for Microbiome Data"
+  authors:
+    - family-names: Gu
+      given-names: Won
+    - family-names: Chiaromonte
+      given-names: Francesca
+    - family-names: Silverman
+      given-names: Justin D.

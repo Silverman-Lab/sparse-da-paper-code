@@ -31,9 +31,12 @@ that commit. Manuscript paths below are relative to that repository.
    `real/sensitivity_3combined 09012026 mean5.pdf`. No matching filename or
    generator was found in the supplied bundle. Locate its source before
    claiming complete reproduction of all manuscript figures.
-6. **Rights and provenance.** Select the authors' code license and complete
-   [the third-party inventory](../THIRD_PARTY.md), including the missing MiMIX
-   license text and source revision. The bundle has no original license file.
+6. **Rights and provenance.** The authors' original code now has an
+   [MIT License](../LICENSE). Complete [the third-party inventory](../THIRD_PARTY.md),
+   including the MiMIX source revision and unresolved dataset terms. MiMIX's
+   upstream MIT notice has been restored, and Justin D. Silverman has authorized
+   the included fido-derived excerpt under MIT. The supplied bundle had no
+   original license file.
 7. **R environment.** Supplied versions are historical records, with no
    `renv.lock` or exact GitHub revisions. Do not create a lockfile from this
    review machine and call it the original analysis environment. Capture a
