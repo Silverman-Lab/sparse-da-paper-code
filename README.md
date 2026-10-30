@@ -2,7 +2,6 @@
 
 Research code accompanying **Sparse Bayesian Partially Identified Models for
 Microbiome Data**, by Won Gu, Francesca Chiaromonte, and Justin D. Silverman.
-
 The code was written by Won Gu.
 
 This repository contains the supplied September 2026 analysis scripts and input
