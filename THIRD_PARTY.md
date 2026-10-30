@@ -72,7 +72,6 @@ Publisher download base:
 | Supplementary Data 8.xlsx | `41467_2022_28426_MOESM10_ESM.xlsx` |
 | Supplementary Data 9.xlsx | Candidate: `41467_2022_28426_MOESM12_ESM.xlsx` (Source Data); unverified |
 
-Supplied filenames and dataset-to-script mappings are retained in
-`docs/STUDENT_README.md`. External R and Julia dependencies are installed
+Analysis scripts and their outputs are mapped in the root [README](README.md). External R and Julia dependencies are installed
 separately and retain their own licenses. Where terms remain unresolved,
 attribution alone does not establish redistribution permission.
